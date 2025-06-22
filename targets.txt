@@ -1,0 +1,4 @@
+GET http://localhost:8080/repositories/octocat/Hello-World
+GET http://localhost:8080/repositories/spring-projects/spring-boot
+GET http://localhost:8080/repositories/torvalds/linux
+

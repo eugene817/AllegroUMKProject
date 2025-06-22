@@ -1,0 +1,16 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with: {java-version: '17', distribution: 'temurin'}
+      - run: mvn test
+#      - run: mvn -B package --file pom.xml
+# for dockerhub registry or idk which registry you need, btw there are some containers i use for my diplomma project,
+# i know they are simple and basically no work, but i thought it would be fun to mention it
+#      - run: docker build -t luferchikz/repo-info:$GITHUB_SHA .
+#      - run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USER }} --password-stdin
+#      - run: docker push luferchikz/repo-info:$GITHUB_SHA
