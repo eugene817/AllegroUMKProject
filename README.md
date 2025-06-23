@@ -1,20 +1,63 @@
 # AllegroUMKProject
+> A Spring Boot service (“Repo-Info”) that returns details about a GitHub repository.
 
-# Co mozna dodac
-- logowanie z GitHub zeby mozna bylo wysylac wiecej requestow
-- Security (CORS, TLS, Rate Limiting)
-- Statystyki (graphana, prometheus)
-- Moze byc dodac testy
 
-## For production
-- Fill the CI
-- Docker-compose/k8s integration
-- If github login, .env or github secrets
-- Security 100%
-- Statistics 100%
+## 📖 Description
 
-# V stands for Vegeta:
-- Atack
+This REST API handles requests to `GET /repositories/{owner}/{repo}` and returns:
+
+- **fullName**: the repository’s full name (`owner/repo`)
+- **description**: repository description
+- **cloneURL**: Git clone URL
+- **stars**: number of stargazers
+- **createdAt**: creation date in ISO 8601 format
+
+**Example request:**
+```bash
+GET http://localhost:8080/repositories/octocat/Hello-World
+```
+
+**Example response**
+```json
+{
+  "fullName":   "octocat/Hello-World",
+  "description":"My first repo!",
+  "cloneURL":   "https://github.com/octocat/Hello-World.git",
+  "stars":      42,
+  "createdAt":  "2011-01-26T19:01:12Z"
+}
+```
+
+# 🚀 Quick Start
+
+1. Build and run with Docker:
+```shell
+docker build -t repo-info:latest .
+docker run --rm -p 8080:8080 repo-info:latest
+```
+
+2. Verify the service:
+```shell
+curl http://localhost:8080/repositories/octocat/Hello-World
+```
+
+# 📚 API Documentation
+- Swagger UI:
+```http
+http://localhost:8080/docs
+```
+- OpenAPI JSON:
+```http
+http://localhost:8080/docs/api-docs
+```
+
+# 🧪 Load Testing with Vegeta
+1. Create a targets.txt file:
+```txt
+# targets.txt
+GET http://localhost:8080/repositories/octocat/Hello-World
+```
+2. Run the attack (20 RPS for 1 minute):
 ```shell
 vegeta attack \
   -rate=20 \
@@ -22,8 +65,7 @@ vegeta attack \
   -targets=targets.txt \
 | tee results.bin
 ```
-
-- Stats:
+3. Generate a text report:
 ```shell
 vegeta report \
   -type=text \
@@ -31,51 +73,21 @@ vegeta report \
   results.bin
 ```
 
-# Run in docker container
-```shell
-docker build -t repo-info:latest .
-docker run --rm -p 8080:8080 repo-info:latest
-```
 
-# Docs:
-```http
-localhost:8080/docs
-```
-## or in json
-```http
-localhost:8080/docs/api-docs
-```
+# 🔧 Possible Enhancements
+- GitHub Authentication: use a Personal Access Token for higher rate limits
+- Security: CORS, TLS/HTTPS, rate limiting (e.g. Bucket4j)
+- Metrics & Monitoring: Prometheus, Grafana, Micrometer
+- Resilience: Circuit Breaker, Retry (Resilience4j)
+- Container Orchestration: Docker Compose, Kubernetes manifests
+- CI/CD: GitHub Actions for build, test, and Docker image publishing
+- Logging & Tracing: Sleuth/OpenTelemetry, centralized log aggregation
 
-## Dziekuje za ciekawy projekt i za zajecia :)
+# ✅ Production Readiness
+- Configuration via application.yml and environment variables
+- Dockerfile and published Docker image
+- Swagger UI and OpenAPI docs at /docs and /docs/api-docs
+- Unit, MVC, and E2E tests
+- Verified ability to handle ≥20 RPS with P95 < 5 ms
 
----
-
-Create a simple REST service that will return details of the given GitHub repository. Details
-should include:
-- full name of the repository
-- description of the repository
-- git clone URL
-- number of stargazers
-- date of creation (ISO format)
-  The API of the service should look as follows:
-  GET /repositories/{owner}/{repository-name}
-  {
-  "fullName": "...",
-  "description": "...",
-  "cloneURL": "...",
-  "stars": 0,
-  "createdAt": "..."
-  }
-  GitHub API reference can be found at: https://docs.github.com/en/rest?apiVersion=2022-11-28
-  Non-functional requirements:
-- should be able to serve 20 requests per second (as in: no obvious bottlenecks)
-- set of end-to-end tests that can be run using some build tool (Gradle or Maven preferred)
-- good design and quality of code
-- almost ready to deploy on production (if additional work is needed, please write what it
-  is)
-  The GitHub API imposes a rate limit, so consider using a cache to reach the desired
-  performance. This could be an in-memory solution or a custom implementation using a
-  database. To simulate heavy endpoint traffic and conduct performance tests you can use tools
-  such as k6, Vegeta, ab, etc.
-  It is OK to make tradeoffs or to simplify the solution as long as you leave a note describing
-  your thought process.
+# Dziekuje za ciekawy project 😊
